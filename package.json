@@ -11,7 +11,7 @@
   },
   "keywords": [
     "ugc",
-    "content-generation", 
+    "content-generation",
     "ai",
     "social-media",
     "marketing",
@@ -23,10 +23,16 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zubeid/ugc-content-generator"
+    "url": "git+https://github.com/zubeid/ugc-content-generator.git"
   },
   "homepage": "https://ugc-generator.vercel.app",
   "devDependencies": {
     "vercel": "^33.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/zubeid/ugc-content-generator/issues"
+  },
+  "dependencies": {
+    "playwright": "^1.55.0"
   }
 }

@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-08-31T06:38:26.385Z",
+  "url": "https://zubaid.app.n8n.cloud/signin?redirect=%252Fworkflow%252FvoLGKykUKSwF9Btm",
+  "addButtonFound": false,
+  "existingNodes": 1,
+  "foundNodeReferences": [
+    {
+      "type": "if",
+      "count": 1
+    }
+  ],
+  "screenshots": [
+    "initial-page.png",
+    "workflow-overview.png"
+  ]
+}

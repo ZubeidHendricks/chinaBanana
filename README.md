@@ -1,8 +1,82 @@
-# 🎨 UGC Content Generator - Vercel Deployment
+# 🎯 Real-Time UGC Generator - Complete Deployment Guide
+
+## ✅ System Status: READY FOR DEPLOYMENT
+
+A complete AI-powered UGC (User-Generated Content) generation system with:
+- **Frontend**: Customer-facing web application (Vercel)  
+- **Backend**: n8n workflow with Gemini 2.0 Flash API
+- **Integration**: Webhook-based API communication
+
+## 📁 Files Included
+
+### 🚀 **MAIN DEPLOYMENT FILE**
+- `corrected_ugc_webhook_workflow.json` - **IMPORT THIS TO N8N** ✅
+
+### 🧪 Testing & Validation
+- `test_webhook.js` - Endpoint testing script
+- `manual_trigger_ugc_workflow.json` - Manual testing version  
+
+### 🌐 Web Application  
+- `index.html` - Complete customer-facing web application
+- Already configured with correct webhook endpoint: `https://zubaid.app.n8n.cloud/webhook/generate-ugc-content`
+
+## 🚀 **DEPLOYMENT STEPS**
+
+### Step 1: Deploy n8n Workflow ⚡
+
+1. **Go to your n8n instance**: https://zubaid.app.n8n.cloud
+2. **Import workflow**: Upload `corrected_ugc_webhook_workflow.json`  
+3. **Activate the workflow**: Click the toggle to activate
+4. **Your webhook endpoint**: `https://zubaid.app.n8n.cloud/webhook/generate-ugc-content`
+
+### Step 2: Test the Webhook 🧪
+
+```bash
+# Option A: Use Node.js test script
+node test_webhook.js
+
+# Option B: Use curl
+curl -X POST https://zubaid.app.n8n.cloud/webhook/generate-ugc-content \
+  -H "Content-Type: application/json" \
+  -d '{
+    "productName": "Wireless Earbuds",
+    "targetAudience": "Fitness Enthusiasts", 
+    "tone": "excited",
+    "industry": "Technology",
+    "contentType": "social_post"
+  }'
+```
+
+### Step 3: Deploy Web Application 🌐
+
+```bash
+# Deploy to Vercel (if not already deployed)
+vercel --prod
+```
+
+## 🔧 Technical Details
+
+### ✅ **Fixed Node Compatibility Issues**
+
+**Previous Errors Fixed:**
+- ❌ `"Unrecognized node type: Webhook.undefined"`
+- ❌ `"Unrecognized node type: @n8n/n8n-nodes-base.stickyNote"`  
+- ❌ `"Unrecognized node type: @n8n/n8n-nodes-base.webhook"`
+
+**Now Using Correct Node Types:**
+- ✅ `n8n-nodes-base.webhook` - Receives POST requests
+- ✅ `n8n-nodes-base.set` - Data processing and formatting  
+- ✅ `n8n-nodes-base.httpRequest` - Gemini API integration
+- ✅ `n8n-nodes-base.respondToWebhook` - CORS-enabled responses
+
+### API Integration
+- **Gemini 2.0 Flash**: Your API key integrated: `AIzaSyBe22N8yLLeTs9JyS9SqgQp3CZ9QJinOeY`
+- **CORS Headers**: Configured for web application compatibility
+- **Error Handling**: Fallback values for missing parameters
 
 ## 🚀 One-Click Vercel Deployment
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzubeid%2Fugc-content-generator&env=N8N_WEBHOOK_URL&envDescription=n8n%20webhook%20endpoint%20for%20UGC%20generation&demo-title=UGC%20Content%20Generator&demo-description=AI-powered%20UGC%20content%20generation%20with%20competitor%20analysis)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FZubeidHendricks%2FchinaBanana&env=N8N_WEBHOOK_URL&envDescription=n8n%20webhook%20endpoint%20for%20UGC%20generation&demo-title=UGC%20Content%20Generator&demo-description=AI-powered%20UGC%20content%20generation%20with%20competitor%20analysis)
 
 ## 📋 Prerequisites
 

@@ -1,0 +1,101 @@
+{
+  "name": "UGC Generator - Manual Trigger",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Start UGC Generation",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "productName",
+              "value": "Fitness Tracker"
+            },
+            {
+              "name": "targetAudience", 
+              "value": "Health Enthusiasts"
+            },
+            {
+              "name": "tone",
+              "value": "Excited"
+            },
+            {
+              "name": "industry",
+              "value": "Fitness"
+            }
+          ]
+        }
+      },
+      "id": "set-data",
+      "name": "Set Product Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "AIzaSyBe22N8yLLeTs9JyS9SqgQp3CZ9QJinOeY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "{\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"Create authentic UGC content for: {{$json.productName}}\\n\\nTarget Audience: {{$json.targetAudience}}\\nTone: {{$json.tone}}\\nIndustry: {{$json.industry}}\\n\\nGenerate:\\n1. Compelling headline (catchy, not corporate)\\n2. Authentic user testimonial (personal experience)\\n3. Social media caption (engaging, with emojis)\\n4. Strong call-to-action\\n5. 3 relevant hashtags\\n\\nMake it sound genuine and user-generated, not like corporate marketing. Use a {{$json.tone}} tone throughout.\"\n    }]\n  }],\n  \"generationConfig\": {\n    \"temperature\": 0.8,\n    \"maxOutputTokens\": 800\n  }\n}"
+      },
+      "id": "gemini-request",
+      "name": "Generate UGC with Gemini",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Start UGC Generation": {
+      "main": [
+        [
+          {
+            "node": "Set Product Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Product Data": {
+      "main": [
+        [
+          {
+            "node": "Generate UGC with Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-31T13:00:00.000Z",
+  "versionId": "1"
+}

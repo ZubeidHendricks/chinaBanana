@@ -1,0 +1,75 @@
+{
+  "name": "Ultra Simple UGC Test",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "simple-test",
+        "responseMode": "onReceived",
+        "responseData": "firstEntryJson",
+        "options": {}
+      },
+      "id": "webhook-ultra",
+      "name": "Ultra Simple Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "simple-test"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "status",
+              "value": "success"
+            },
+            {
+              "name": "message",
+              "value": "Webhook is working!"
+            },
+            {
+              "name": "input_product",
+              "value": "={{$json.body.productName || 'No product specified'}}"
+            },
+            {
+              "name": "generated_content",
+              "value": "🎉 **Headline:** Amazing {{$json.body.productName || 'product'}}!\n\n📝 **Testimonial:** This {{$json.body.productName || 'product'}} has completely transformed my daily routine. I can't imagine going back to my old setup!\n\n📱 **Social Caption:** Just tried this incredible {{$json.body.productName || 'product'}} and I'm blown away! 🤯✨ Perfect for {{$json.body.targetAudience || 'everyone'}}! #GameChanger #MustHave #{{$json.body.tone || 'Amazing'}}\n\n🎯 **CTA:** Don't wait - get yours today!\n\n🏷️ **Hashtags:** #ProductReview #Authentic #UserGenerated"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{new Date().toISOString()}}"
+            }
+          ]
+        }
+      },
+      "id": "format-ultra",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300]
+    }
+  ],
+  "connections": {
+    "Ultra Simple Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-31T17:00:00.000Z",
+  "versionId": "1"
+}

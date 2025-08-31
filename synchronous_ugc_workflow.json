@@ -1,0 +1,125 @@
+{
+  "name": "UGC Generator - Synchronous Response",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ugc-sync",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-sync",
+      "name": "Sync UGC Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "ugc-sync"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "productName",
+              "value": "={{$json.body.productName || 'Amazing Product'}}"
+            },
+            {
+              "name": "targetAudience", 
+              "value": "={{$json.body.targetAudience || 'General Audience'}}"
+            },
+            {
+              "name": "tone",
+              "value": "={{$json.body.tone || 'friendly'}}"
+            }
+          ]
+        }
+      },
+      "id": "extract-sync",
+      "name": "Extract Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "AIzaSyBe22N8yLLeTs9JyS9SqgQp3CZ9QJinOeY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "{\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Create authentic UGC content for: {{$json.productName}}\\n\\nTarget Audience: {{$json.targetAudience}}\\nTone: {{$json.tone}}\\n\\nGenerate:\\n1. Compelling headline\\n2. User testimonial (2-3 sentences)\\n3. Social media caption with emojis\\n4. Call-to-action\\n5. Three hashtags\\n\\nMake it sound genuine and user-generated.\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"temperature\": 0.7,\n    \"maxOutputTokens\": 500\n  }\n}"
+      },
+      "id": "gemini-sync",
+      "name": "Gemini API Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"product\": $('Extract Data').first().json.productName,\n  \"audience\": $('Extract Data').first().json.targetAudience,\n  \"tone\": $('Extract Data').first().json.tone,\n  \"generated_content\": $json.candidates[0].content.parts[0].text,\n  \"timestamp\": new Date().toISOString(),\n  \"model\": \"gemini-1.5-flash\"\n} }}"
+      },
+      "id": "webhook-response-sync",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Sync UGC Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "Gemini API Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini API Call": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-31T16:30:00.000Z",
+  "versionId": "1"
+}

@@ -1,0 +1,65 @@
+{
+  "name": "Minimal UGC Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ugc-generate",
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-start",
+      "name": "UGC Webhook",
+      "type": "Webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "ugc-generate"
+    },
+    {
+      "parameters": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "AIzaSyBe22N8yLLeTs9JyS9SqgQp3CZ9QJinOeY"
+            },
+            {
+              "name": "Content-Type", 
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "jsonBody": "{\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"Create authentic UGC content for: {{$json.body.productName || 'Amazing Product'}}\\n\\nTarget Audience: {{$json.body.targetAudience || 'Young Adults'}}\\nTone: {{$json.body.tone || 'Friendly'}}\\n\\nGenerate:\\n1. Compelling headline\\n2. Authentic user testimonial\\n3. Social media caption\\n4. Call-to-action\\n5. 3 hashtags\\n\\nMake it sound genuine and user-generated.\"\n    }]\n  }],\n  \"generationConfig\": {\n    \"temperature\": 0.7,\n    \"maxOutputTokens\": 500\n  }\n}"
+      },
+      "id": "gemini-generate",
+      "name": "Generate with Gemini",
+      "type": "HTTP Request",
+      "typeVersion": 4,
+      "position": [460, 300]
+    }
+  ],
+  "connections": {
+    "UGC Webhook": {
+      "main": [
+        [
+          {
+            "node": "Generate with Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-31T12:30:00.000Z",
+  "versionId": "1"
+}

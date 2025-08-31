@@ -1,0 +1,205 @@
+{
+  "name": "Real-Time UGC Generator - Corrected",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-ugc-content",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "UGC Request Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "webhookId": "generate-ugc-content"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "productName",
+              "value": "={{$json.body.productName || 'Amazing Product'}}"
+            },
+            {
+              "name": "targetAudience", 
+              "value": "={{$json.body.targetAudience || 'General Audience'}}"
+            },
+            {
+              "name": "tone",
+              "value": "={{$json.body.tone || 'friendly'}}"
+            },
+            {
+              "name": "industry",
+              "value": "={{$json.body.industry || 'General'}}"
+            },
+            {
+              "name": "contentType",
+              "value": "={{$json.body.contentType || 'social_post'}}"
+            }
+          ]
+        }
+      },
+      "id": "extract-data",
+      "name": "Extract Request Data", 
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-goog-api-key",
+              "value": "AIzaSyBe22N8yLLeTs9JyS9SqgQp3CZ9QJinOeY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "{\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": \"Create authentic UGC (User-Generated Content) for: {{$json.productName}}\\n\\nTarget Audience: {{$json.targetAudience}}\\nTone: {{$json.tone}}\\nIndustry: {{$json.industry}}\\nContent Type: {{$json.contentType}}\\n\\nGenerate AUTHENTIC user-generated content that includes:\\n\\n1. HEADLINE: A catchy, non-corporate headline that sounds like a real user wrote it\\n2. USER TESTIMONIAL: A genuine-sounding personal experience/review (2-3 sentences)\\n3. SOCIAL CAPTION: An engaging social media post with emojis and authentic language\\n4. CALL-TO-ACTION: A compelling but natural CTA\\n5. HASHTAGS: 3 relevant hashtags that real users would use\\n\\nIMPORTANT: Make this sound like genuine user-generated content, NOT corporate marketing. Use a {{$json.tone}} tone and make it feel authentic and personal. Include specific details that make it believable.\"\n    }]\n  }],\n  \"generationConfig\": {\n    \"temperature\": 0.8,\n    \"maxOutputTokens\": 1000\n  }\n}"
+      },
+      "id": "gemini-generate",
+      "name": "Generate UGC with Gemini",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "request_id",
+              "value": "={{new Date().toISOString()}}"
+            },
+            {
+              "name": "product_name",
+              "value": "={{$('Extract Request Data').first().json.productName}}"
+            },
+            {
+              "name": "target_audience",
+              "value": "={{$('Extract Request Data').first().json.targetAudience}}"
+            },
+            {
+              "name": "tone",
+              "value": "={{$('Extract Request Data').first().json.tone}}"
+            },
+            {
+              "name": "generated_content",
+              "value": "={{$json.candidates[0].content.parts[0].text}}"
+            },
+            {
+              "name": "status",
+              "value": "success"
+            },
+            {
+              "name": "ai_model",
+              "value": "Gemini 2.0 Flash"
+            }
+          ]
+        }
+      },
+      "id": "format-response",
+      "name": "Format UGC Response",
+      "type": "n8n-nodes-base.set", 
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"success\": true,\n  \"request_id\": $json.request_id,\n  \"product_name\": $json.product_name,\n  \"target_audience\": $json.target_audience,\n  \"tone\": $json.tone,\n  \"generated_content\": $json.generated_content,\n  \"ai_model\": $json.ai_model,\n  \"generated_at\": $json.request_id,\n  \"webhook_url\": \"https://zubaid.app.n8n.cloud/webhook/generate-ugc-content\"\n} }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods", 
+                "value": "POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "id": "webhook-response",
+      "name": "Send UGC Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "UGC Request Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Request Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Request Data": {
+      "main": [
+        [
+          {
+            "node": "Generate UGC with Gemini",
+            "type": "main", 
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate UGC with Gemini": {
+      "main": [
+        [
+          {
+            "node": "Format UGC Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format UGC Response": {
+      "main": [
+        [
+          {
+            "node": "Send UGC Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-01-31T14:00:00.000Z",
+  "versionId": "1"
+}
