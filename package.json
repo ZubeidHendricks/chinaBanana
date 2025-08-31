@@ -1,0 +1,32 @@
+{
+  "name": "ugc-content-generator",
+  "version": "1.0.0",
+  "description": "AI-powered UGC content generator with real-time competitor analysis",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'",
+    "start": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "ugc",
+    "content-generation", 
+    "ai",
+    "social-media",
+    "marketing",
+    "gemini",
+    "bright-data",
+    "n8n"
+  ],
+  "author": "Zubeid Hendricks",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zubeid/ugc-content-generator"
+  },
+  "homepage": "https://ugc-generator.vercel.app",
+  "devDependencies": {
+    "vercel": "^33.0.0"
+  }
+}
